@@ -105,7 +105,7 @@ public class PbDeserializer implements JbDeserializer {
   }
 
   public World deserializeWorld(PbWorld argWorld) {
-    World world = new World(pbToVec(argWorld.getGravity()));
+    World world = new World(pbToVec(argWorld.getGravity()), argWorld.getAllowSleep());
 
     world.setAutoClearForces(argWorld.getAutoClearForces());
     world.setContinuousPhysics(argWorld.getContinuousPhysics());
@@ -247,8 +247,8 @@ public class PbDeserializer implements JbDeserializer {
         PolygonShape p = new PolygonShape();
         p.m_centroid.set(pbToVec(s.getCentroid()));
         p.m_radius = s.getRadius();
-        p.m_count = s.getPointsCount();
-        for (int i = 0; i < p.m_count; i++) {
+        p.m_vertexCount = s.getPointsCount();
+        for (int i = 0; i < p.m_vertexCount; i++) {
           p.m_vertices[i].set(pbToVec(s.getPoints(i)));
           p.m_normals[i].set(pbToVec(s.getNormals(i)));
         }
@@ -298,7 +298,7 @@ public class PbDeserializer implements JbDeserializer {
         def.enableMotor = argJoint.getEnableMotor();
         def.localAnchorA.set(pbToVec(argJoint.getLocalAnchorA()));
         def.localAnchorB.set(pbToVec(argJoint.getLocalAnchorB()));
-        def.localAxisA.set(pbToVec(argJoint.getLocalAxisA()));
+        def.localAxis1.set(pbToVec(argJoint.getLocalAxisA()));
         def.lowerTranslation = argJoint.getLowerLimit();
         def.maxMotorForce = argJoint.getMaxMotorForce();
         def.motorSpeed = argJoint.getMotorSpeed();
@@ -339,6 +339,8 @@ public class PbDeserializer implements JbDeserializer {
         def.groundAnchorB.set(pbToVec(argJoint.getGroundAnchorB()));
         def.lengthA = argJoint.getLengthA();
         def.lengthB = argJoint.getLengthB();
+        def.maxLengthA = argJoint.getMaxLengthA();
+        def.maxLengthB = argJoint.getMaxLengthB();
         def.ratio = argJoint.getRatio();
         break;
       }
@@ -381,8 +383,6 @@ public class PbDeserializer implements JbDeserializer {
         def.localAnchorA.set(pbToVec(argJoint.getLocalAnchorA()));
         def.localAnchorB.set(pbToVec(argJoint.getLocalAnchorB()));
         def.referenceAngle = argJoint.getRefAngle();
-        def.frequencyHz = argJoint.getFrequency();
-        def.dampingRatio = argJoint.getDampingRatio();
         break;
       }
       case FRICTION: {

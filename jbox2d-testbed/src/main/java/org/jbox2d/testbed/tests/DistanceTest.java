@@ -21,7 +21,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-
 package org.jbox2d.testbed.tests;
 
 import org.jbox2d.collision.Distance.SimplexCache;
@@ -59,7 +58,7 @@ public class DistanceTest extends TestbedTest {
 		{
 			m_transformA = new Transform();
 			m_transformA.setIdentity();
-			m_transformA.p.set(0.0f, -0.2f);
+			m_transformA.position.set(0.0f, -0.2f);
 			m_polygonA = new PolygonShape();
 			m_polygonA.setAsBox(10.0f, 0.2f);
 		}
@@ -92,8 +91,8 @@ public class DistanceTest extends TestbedTest {
 	public void step(TestbedSettings settings) {
 		super.step(settings);
 		
-		input.proxyA.set(m_polygonA,0);
-		input.proxyB.set(m_polygonB,0);
+		input.proxyA.set(m_polygonA);
+		input.proxyB.set(m_polygonB);
 		input.transformA.set(m_transformA);
 		input.transformB.set(m_transformB);
 		input.useRadii = true;
@@ -104,15 +103,15 @@ public class DistanceTest extends TestbedTest {
 		addTextLine("iterations = " + output.iterations);
 		
 		{
-			for (int i = 0; i < m_polygonA.m_count; ++i) {
-				Transform.mulToOutUnsafe(m_transformA, m_polygonA.m_vertices[i], v[i]);
+			for (int i = 0; i < m_polygonA.m_vertexCount; ++i) {
+				Transform.mulToOut(m_transformA, m_polygonA.m_vertices[i], v[i]);
 			}
-			getDebugDraw().drawPolygon(v, m_polygonA.m_count, color);
+			getDebugDraw().drawPolygon(v, m_polygonA.m_vertexCount, color);
 			
-			for (int i = 0; i < m_polygonB.m_count; ++i) {
-				Transform.mulToOutUnsafe(m_transformB, m_polygonB.m_vertices[i], v[i]);
+			for (int i = 0; i < m_polygonB.m_vertexCount; ++i) {
+				Transform.mulToOut(m_transformB, m_polygonB.m_vertices[i], v[i]);
 			}
-			getDebugDraw().drawPolygon(v, m_polygonB.m_count, color);
+			getDebugDraw().drawPolygon(v, m_polygonB.m_vertexCount, color);
 		}
 		
 		Vec2 x1 = output.pointA;

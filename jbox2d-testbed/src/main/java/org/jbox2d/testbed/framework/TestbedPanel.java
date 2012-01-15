@@ -71,9 +71,8 @@ public interface TestbedPanel {
 
   /**
    * Renders the world
-   * @return if the renderer is ready for drawing
    */
-  public boolean render();
+  public void render();
 
   /**
    * Paints the rendered world to the screen

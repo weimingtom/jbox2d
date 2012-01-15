@@ -21,22 +21,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-/**
- * Created at 3:43:53 AM Jul 7, 2010
- */
-package org.jbox2d.callbacks;
+package org.jbox2d.dynamics.contacts;
 
-import org.jbox2d.common.Settings;
+import org.jbox2d.common.Vec2;
 
-// updated to rev 100
+// updated to rev 100 - ec
 
-/**
- * Contact impulses for reporting. Impulses are used instead of forces because
- * sub-step forces may approach infinity for rigid body collisions. These
- * match up one-to-one with the contact points in b2Manifold.
- * @author Daniel Murphy
- */
-public class ContactImpulse {
-	public float[] normalImpulses = new float[Settings.maxManifoldPoints];
-	public float[] tangentImpulses = new float[Settings.maxManifoldPoints];
+public class ContactConstraintPoint {
+	
+    public final Vec2 localPoint;
+    public final Vec2 rA;
+    public final Vec2 rB;
+
+    public float normalImpulse;
+    public float tangentImpulse;
+    public float normalMass;
+    public float tangentMass;
+    public float velocityBias;
+
+    public ContactConstraintPoint() {
+        localPoint = new Vec2();
+        rA = new Vec2();
+        rB = new Vec2();
+    }
+    
+    public void set(final ContactConstraintPoint cp){
+    	localPoint.set(cp.localPoint);
+    	rA.set(cp.rA);
+    	rB.set(cp.rB);
+    	normalImpulse = cp.normalImpulse;
+    	tangentImpulse = cp.tangentImpulse;
+    	normalMass = cp.normalMass;
+    	tangentMass = cp.tangentMass;
+        velocityBias = cp.velocityBias;
+    }
 }

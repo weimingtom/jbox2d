@@ -30,9 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -56,7 +54,6 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
-import org.jbox2d.dynamics.Profile;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.Joint;
@@ -79,7 +76,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class TestbedTest implements ContactListener, ObjectListener,
 		ObjectSigner, UnsupportedListener {
-	public static final int MAX_CONTACT_POINTS = 4048;
+	public static final int MAX_CONTACT_POINTS = 2048;
 
 	protected static final long GROUND_BODY_TAG = 1897450239847L;
 	protected static final long BOMB_TAG = 98989788987L;
@@ -201,7 +198,7 @@ public abstract class TestbedTest implements ContactListener, ObjectListener,
 		};
 
 		Vec2 gravity = new Vec2(0, -10f);
-		m_world = new World(gravity);
+		m_world = new World(gravity, true);
 		bomb = null;
 		mouseJoint = null;
 
@@ -563,7 +560,6 @@ public abstract class TestbedTest implements ContactListener, ObjectListener,
 	private final Color3f mouseColor = new Color3f(0f, 1f, 0f);
 	private final Vec2 p1 = new Vec2();
 	private final Vec2 p2 = new Vec2();
-	private final List<String> statsList = new ArrayList<String>();
 
 	public synchronized void step(TestbedSettings settings) {
 		float hz = settings.getSetting(TestbedSettings.Hz).value;
@@ -633,18 +629,7 @@ public abstract class TestbedTest implements ContactListener, ObjectListener,
 							+ m_world.getContactCount() + "/"
 							+ m_world.getJointCount() + "/"
 							+ m_world.getProxyCount(), Color3f.WHITE);
-            m_textLine += 15;
-            
-            statsList.clear();
-            Profile p = getWorld().getProfile();
-            p.toDebugStrings(statsList);
-            
-            for (String s : statsList) {
-                model.getDebugDraw()
-                        .drawString(5, m_textLine, s, Color3f.WHITE);
-                m_textLine += 15;
-            }
-			m_textLine += 5;
+			m_textLine += 20;
 		}
 
 		if (settings.getSetting(TestbedSettings.DrawHelp).enabled) {

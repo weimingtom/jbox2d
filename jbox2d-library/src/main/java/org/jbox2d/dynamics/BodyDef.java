@@ -114,7 +114,7 @@ public class BodyDef {
 	/**
 	 * Experimental: scales the inertia tensor.
 	 */
-	public float gravityScale;
+	public float inertiaScale;
 	
 	public BodyDef() {
 		userData = null;
@@ -130,6 +130,6 @@ public class BodyDef {
 		bullet = false;
 		type = BodyType.STATIC;
 		active = true;
-		gravityScale = 1.0f;
+		inertiaScale = 1.0f;
 	}
 }

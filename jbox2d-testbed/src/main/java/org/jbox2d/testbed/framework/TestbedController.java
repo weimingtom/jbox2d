@@ -315,10 +315,9 @@ public class TestbedController implements Runnable {
         updateTime = System.nanoTime();
       }
 
-      if(panel.render()) {
-        update();
-        panel.paintScreen();        
-      }
+      panel.render();
+      update();
+      panel.paintScreen();
       frameCount++;
 
       afterTime = System.nanoTime();

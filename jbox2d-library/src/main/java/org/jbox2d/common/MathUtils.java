@@ -234,10 +234,6 @@ public class MathUtils {
 		return a < b ? a : b;
 	}
 	
-	public final static int min(final int a, final int b) {
-      return a < b ? a : b;
-  }
-	
 	public final static float map(final float val, final float fromMin, final float fromMax, final float toMin,
 			final float toMax) {
 		final float mult = (val - fromMin) / (fromMax - fromMin);

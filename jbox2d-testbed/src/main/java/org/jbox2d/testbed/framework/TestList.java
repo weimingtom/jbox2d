@@ -44,11 +44,10 @@ import org.jbox2d.testbed.tests.DominoTest;
 import org.jbox2d.testbed.tests.DominoTower;
 import org.jbox2d.testbed.tests.DynamicTreeTest;
 import org.jbox2d.testbed.tests.EdgeShapes;
-//import org.jbox2d.testbed.tests.Gears;
+import org.jbox2d.testbed.tests.Gears;
+import org.jbox2d.testbed.tests.LineJointTest;
 import org.jbox2d.testbed.tests.LiquidTest;
-import org.jbox2d.testbed.tests.MJWTest;
 import org.jbox2d.testbed.tests.OneSidedTest;
-import org.jbox2d.testbed.tests.PistonTest;
 import org.jbox2d.testbed.tests.PolyShapes;
 import org.jbox2d.testbed.tests.PrismaticTest;
 import org.jbox2d.testbed.tests.Pulleys;
@@ -73,8 +72,6 @@ public class TestList {
   public static void populateModel(TestbedModel argModel){
       
       argModel.addCategory("Featured");
-      argModel.addTest(new Chain());
-      argModel.addTest(new MJWTest());
       argModel.addTest(new DominoTest());
       argModel.addTest(new CompoundShapesTest());
       argModel.addTest(new BlobTest4());
@@ -86,7 +83,6 @@ public class TestList {
       argModel.addTest(new VaryingFrictionTest());
       argModel.addTest(new SphereStack());
       argModel.addTest(new VerticalStack());
-      argModel.addTest(new PistonTest());
       argModel.addTest(new PyramidTest());
       argModel.addTest(new DominoTower());
       argModel.addTest(new CircleStress());
@@ -112,8 +108,8 @@ public class TestList {
       argModel.addTest(new PrismaticTest());
       argModel.addTest(new RevoluteTest());
       argModel.addTest(new Pulleys());
-//      argModel.addTest(new LineJointTest());
-//      argModel.addTest(new Gears());
+      argModel.addTest(new LineJointTest());
+      argModel.addTest(new Gears());
       argModel.addTest(new Web());
       argModel.addTest(new Chain());
       argModel.addTest(new Cantilever());

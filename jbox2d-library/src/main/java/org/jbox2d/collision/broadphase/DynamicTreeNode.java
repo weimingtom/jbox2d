@@ -21,22 +21,43 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-/**
- * Created at 3:43:53 AM Jul 7, 2010
- */
-package org.jbox2d.callbacks;
+package org.jbox2d.collision.broadphase;
 
-import org.jbox2d.common.Settings;
+import org.jbox2d.collision.AABB;
 
-// updated to rev 100
-
-/**
- * Contact impulses for reporting. Impulses are used instead of forces because
- * sub-step forces may approach infinity for rigid body collisions. These
- * match up one-to-one with the contact points in b2Manifold.
- * @author Daniel Murphy
- */
-public class ContactImpulse {
-	public float[] normalImpulses = new float[Settings.maxManifoldPoints];
-	public float[] tangentImpulses = new float[Settings.maxManifoldPoints];
+public class DynamicTreeNode {
+	/**
+	 * This is the fattened AABB
+	 */
+	public final AABB aabb = new AABB();
+	
+	public Object userData;
+	
+	protected DynamicTreeNode parent;
+	protected DynamicTreeNode next;
+	
+	protected DynamicTreeNode child1;
+	protected DynamicTreeNode child2;
+	
+	/**
+	 * used for sorting purposes, don't modify
+	 */
+	public int key;
+	
+	public final boolean isLeaf() {
+		return child1 == null;
+	}
+	
+	public Object getUserData() {
+		return userData;
+	}
+	
+	public void setUserData(Object argData) {
+		userData = argData;
+	}
+	
+	/**
+	 * Should never be constructed outside the engine
+	 */
+	protected DynamicTreeNode() {}
 }
