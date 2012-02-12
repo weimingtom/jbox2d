@@ -24,7 +24,6 @@
 package org.jbox2d.testbed.tests;
 
 import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -58,22 +57,22 @@ public class ConfinedTest extends TestbedTest {
 			BodyDef bd = new BodyDef();
 			Body ground = getWorld().createBody(bd);
 
-			EdgeShape shape = new EdgeShape();
+			PolygonShape shape = new PolygonShape();
 
 			// Floor
-			shape.set(new Vec2(-10.0f, 0.0f), new Vec2(10.0f, 0.0f));
+			shape.setAsEdge(new Vec2(-10.0f, 0.0f), new Vec2(10.0f, 0.0f));
 			ground.createFixture(shape, 0.0f);
 
 			// Left wall
-			shape.set(new Vec2(-10.0f, 0.0f), new Vec2(-10.0f, 20.0f));
+			shape.setAsEdge(new Vec2(-10.0f, 0.0f), new Vec2(-10.0f, 20.0f));
 			ground.createFixture(shape, 0.0f);
 
 			// Right wall
-			shape.set(new Vec2(10.0f, 0.0f), new Vec2(10.0f, 20.0f));
+			shape.setAsEdge(new Vec2(10.0f, 0.0f), new Vec2(10.0f, 20.0f));
 			ground.createFixture(shape, 0.0f);
 
 			// Roof
-			shape.set(new Vec2(-10.0f, 20.0f), new Vec2(10.0f, 20.0f));
+			shape.setAsEdge(new Vec2(-10.0f, 20.0f), new Vec2(10.0f, 20.0f));
 			ground.createFixture(shape, 0.0f);
 		}
 

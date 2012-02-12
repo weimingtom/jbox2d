@@ -146,9 +146,7 @@ public class DebugDrawJ2D extends DebugDraw {
   @Override
   public void drawString(float x, float y, String s, Color3f color) {
     Graphics2D g = getGraphics();
-    if ( g== null)  {
-      return;
-    }
+
     Color c = cpool.getColor(color.x, color.y, color.z);
     g.setColor(c);
     g.drawString(s, x, y);
@@ -163,22 +161,22 @@ public class DebugDrawJ2D extends DebugDraw {
   @Override
   public void drawTransform(Transform xf) {
     Graphics2D g = getGraphics();
-    getWorldToScreenToOut(xf.p, temp);
+    getWorldToScreenToOut(xf.position, temp);
     temp2.setZero();
     float k_axisScale = 0.4f;
 
     Color c = cpool.getColor(1, 0, 0);
     g.setColor(c);
 
-    temp2.x = xf.p.x + k_axisScale * xf.q.c;
-    temp2.y = xf.p.y + k_axisScale * xf.q.s;
+    temp2.x = xf.position.x + k_axisScale * xf.R.col1.x;
+    temp2.y = xf.position.y + k_axisScale * xf.R.col1.y;
     getWorldToScreenToOut(temp2, temp2);
     g.drawLine((int) temp.x, (int) temp.y, (int) temp2.x, (int) temp2.y);
 
     c = cpool.getColor(0, 1, 0);
     g.setColor(c);
-    temp2.x = xf.p.x + k_axisScale * xf.q.c;
-    temp2.y = xf.p.y + k_axisScale * xf.q.s;
+    temp2.x = xf.position.x + k_axisScale * xf.R.col2.x;
+    temp2.y = xf.position.y + k_axisScale * xf.R.col2.y;
     getWorldToScreenToOut(temp2, temp2);
     g.drawLine((int) temp.x, (int) temp.y, (int) temp2.x, (int) temp2.y);
   }

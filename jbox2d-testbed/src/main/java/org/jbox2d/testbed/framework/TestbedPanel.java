@@ -71,7 +71,7 @@ public interface TestbedPanel {
 
   /**
    * Renders the world
-   * @return if the renderer is ready for drawing
+   * @return if the rending was successful
    */
   public boolean render();
 

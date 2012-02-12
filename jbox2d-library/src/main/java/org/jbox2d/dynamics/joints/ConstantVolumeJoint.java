@@ -27,7 +27,6 @@ import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.SolverData;
 import org.jbox2d.dynamics.TimeStep;
 import org.jbox2d.dynamics.World;
 
@@ -183,7 +182,8 @@ public class ConstantVolumeJoint extends Joint {
   }
 
   @Override
-  public void initVelocityConstraints(final SolverData data) {
+  public void initVelocityConstraints(final TimeStep step) {
+    m_step = step;
 
     final Vec2[] d = pool.getVec2Array(bodies.length);
 
@@ -194,8 +194,8 @@ public class ConstantVolumeJoint extends Joint {
       d[i].subLocal(bodies[prev].getWorldCenter());
     }
 
-    if (data.step.warmStarting) {
-      m_impulse *= data.step.dtRatio;
+    if (step.warmStarting) {
+      m_impulse *= step.dtRatio;
       // float lambda = -2.0f * crossMassSum / dotMassSum;
       // System.out.println(crossMassSum + " " +dotMassSum);
       // lambda = MathUtils.clamp(lambda, -Settings.maxLinearCorrection,
@@ -211,12 +211,12 @@ public class ConstantVolumeJoint extends Joint {
   }
 
   @Override
-  public boolean solvePositionConstraints(final SolverData data) {
-    return constrainEdges(data.step);
+  public boolean solvePositionConstraints(float baumgarte) {
+    return constrainEdges(m_step);
   }
 
   @Override
-  public void solveVelocityConstraints(final SolverData data) {
+  public void solveVelocityConstraints(final TimeStep step) {
     float crossMassSum = 0.0f;
     float dotMassSum = 0.0f;
 

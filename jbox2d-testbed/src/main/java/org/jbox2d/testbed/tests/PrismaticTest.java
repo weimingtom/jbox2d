@@ -99,7 +99,7 @@ public class PrismaticTest extends TestbedTest {
 	public void step(TestbedSettings settings) {
 		super.step(settings);
 		addTextLine("Keys: (l) limits, (m) motors, (s) speed");
-		float force = m_joint.getMotorForce(1);
+		float force = m_joint.getMotorForce();
 		addTextLine("Motor Force = " + force);
 	}
 	

@@ -27,7 +27,6 @@
 package org.jbox2d.testbed.tests;
 
 import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -45,7 +44,7 @@ public class VerticalStack extends TestbedTest {
   
   
   public static final int e_columnCount = 5;
-  public static final int e_rowCount = 10;
+  public static final int e_rowCount = 16;
 
   Body m_bullet;
   
@@ -83,12 +82,11 @@ public class VerticalStack extends TestbedTest {
       BodyDef bd = new BodyDef();
       Body ground = getWorld().createBody(bd);
 
-      EdgeShape shape = new EdgeShape();
-      //shape.setAsBox(40, 10, new Vec2(0,-10), 0);
-      shape.set(new Vec2(-40.0f, 0.0f), new Vec2(40.0f, 0.0f));
+      PolygonShape shape = new PolygonShape();
+      shape.setAsEdge(new Vec2(-40.0f, 0.0f), new Vec2(40.0f, 0.0f));
       ground.createFixture(shape, 0.0f);
 
-      shape.set(new Vec2(20.0f, 0.0f), new Vec2(20.0f, 20.0f));
+      shape.setAsEdge(new Vec2(20.0f, 0.0f), new Vec2(20.0f, 20.0f));
       ground.createFixture(shape, 0.0f);
     }
 

@@ -57,7 +57,7 @@ import org.jbox2d.testbed.framework.TestbedSetting.SettingType;
 
 
 /**
- * The testbed side panel. Facilitates test and setting changes.
+ * The testbed side panel.  Facilitates test and setting changes.
  * 
  * @author Daniel Murphy
  */
@@ -70,7 +70,7 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
   final TestbedModel model;
   final TestbedController controller;
 
-  public JComboBox<ListItem> tests;
+  public JComboBox tests;
 
   private JButton pauseButton = new JButton("Pause");
   private JButton stepButton = new JButton("Step");
@@ -84,8 +84,8 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
     model = argModel;
     controller = argController;
     initComponents();
-    tests.setSelectedIndex(1);
     addListeners();
+    tests.setSelectedIndex(1);
 
     model.addTestChangeListener(new TestbedModel.TestChangedListener() {
       @Override
@@ -107,18 +107,20 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
     top.setLayout(new GridLayout(0, 1));
     top.setBorder(BorderFactory.createCompoundBorder(new EtchedBorder(EtchedBorder.LOWERED),
         BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-    tests = new JComboBox<ListItem>(model.getComboModel());
+    tests = new JComboBox(model.getComboModel());
     tests.setMaximumRowCount(30);
     tests.setMaximumSize(new Dimension(250, 20));
     tests.addActionListener(this);
-    tests.setRenderer(new ListCellRenderer<ListItem>() {
+    tests.setRenderer(new ListCellRenderer() {
       JLabel categoryLabel = null;
       JLabel testLabel = null;
 
       @Override
-      public Component getListCellRendererComponent(JList<? extends ListItem> list, ListItem value,
-          int index, boolean isSelected, boolean cellHasFocus) {
-        if (value.isCategory()) {
+      public Component getListCellRendererComponent(JList list, Object value, int index,
+          boolean isSelected, boolean cellHasFocus) {
+        ListItem item = (ListItem) value;
+
+        if (item.isCategory()) {
           if (categoryLabel == null) {
             categoryLabel = new JLabel();
             categoryLabel.setOpaque(true);
@@ -127,7 +129,7 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
             categoryLabel.setHorizontalAlignment(SwingConstants.CENTER);
             categoryLabel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
           }
-          categoryLabel.setText(value.category);
+          categoryLabel.setText(item.category);
           return categoryLabel;
         } else {
           if (testLabel == null) {
@@ -135,7 +137,7 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
             testLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 1, 0));
           }
 
-          testLabel.setText(value.test.getTestName());
+          testLabel.setText(item.test.getTestName());
 
           if (isSelected) {
             testLabel.setBackground(list.getSelectionBackground());
@@ -149,7 +151,6 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
       }
     });
 
-    top.add(new JLabel("Choose a test:"));
     top.add(tests);
 
     addSettings(top, settings, SettingType.DRAWING);

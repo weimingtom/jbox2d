@@ -27,7 +27,6 @@
 package org.jbox2d.testbed.tests;
 
 import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -74,8 +73,8 @@ public class CollisionFiltering extends TestbedTest {
 	  }
 		// Ground body
 		{
-			EdgeShape shape = new EdgeShape();
-			shape.set(new Vec2(-40.0f, 0.0f), new Vec2(40.0f, 0.0f));
+			PolygonShape shape = new PolygonShape();
+			shape.setAsEdge(new Vec2(-40.0f, 0.0f), new Vec2(40.0f, 0.0f));
 
 			FixtureDef sd = new FixtureDef();
 			sd.shape = shape;
@@ -137,7 +136,7 @@ public class CollisionFiltering extends TestbedTest {
 			jd.enableLimit = true;
 			jd.localAnchorA.set(0.0f, 4.0f);
 			jd.localAnchorB.setZero();
-			jd.localAxisA.set(0.0f, 1.0f);
+			jd.localAxis1.set(0.0f, 1.0f);
 			jd.lowerTranslation = -1.0f;
 			jd.upperTranslation = 1.0f;
 

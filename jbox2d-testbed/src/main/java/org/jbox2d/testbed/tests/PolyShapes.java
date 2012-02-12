@@ -217,7 +217,7 @@ public class PolyShapes extends TestbedTest {
 		callback.debugDraw = getDebugDraw();
 
 		AABB aabb = new AABB();
-		callback.m_circle.computeAABB(aabb, callback.m_transform, 0);
+		callback.m_circle.computeAABB(aabb, callback.m_transform);
 
 		getWorld().queryAABB(callback, aabb);
 
@@ -281,7 +281,7 @@ class PolyShapesCallback implements QueryCallback{
 		case POLYGON:
 			{
 				PolygonShape poly = (PolygonShape)fixture.getShape();
-				int vertexCount = poly.m_count;
+				int vertexCount = poly.m_vertexCount;
 				assert(vertexCount <= Settings.maxPolygonVertices);
 				Vec2 vertices[] = new Vec2[Settings.maxPolygonVertices];
 
@@ -306,7 +306,7 @@ class PolyShapesCallback implements QueryCallback{
 		Body body = fixture.getBody();
 		Shape shape = fixture.getShape();
 
-		boolean overlap = p.getCollision().testOverlap(shape, 0, m_circle, 0, body.getTransform(), m_transform);
+		boolean overlap = p.getCollision().testOverlap(shape, m_circle, body.getTransform(), m_transform);
 
 		if (overlap)
 		{
