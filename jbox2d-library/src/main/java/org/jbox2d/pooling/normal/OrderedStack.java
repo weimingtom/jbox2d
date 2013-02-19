@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -28,10 +28,15 @@ package org.jbox2d.pooling.normal;
 
 import java.lang.reflect.Array;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Daniel Murphy
  */
 public class OrderedStack<E> {
+  private static final Logger log = LoggerFactory.getLogger(OrderedStack.class);
+
   private final E[] pool;
   private int index;
   private final int size;
@@ -44,8 +49,12 @@ public class OrderedStack<E> {
     for (int i = 0; i < argStackSize; i++) {
       try {
         pool[i] = argClass.newInstance();
-      } catch (Exception e) {
-        throw new RuntimeException("Error creating pooled object " + argClass.getSimpleName(), e);
+      } catch (InstantiationException e) {
+        log.error("Error creating pooled object " + argClass.getSimpleName(), e);
+        assert (false) : "Error creating pooled object " + argClass.getCanonicalName();
+      } catch (IllegalAccessException e) {
+        log.error("Error creating pooled object " + argClass.getSimpleName(), e);
+        assert (false) : "Error creating pooled object " + argClass.getCanonicalName();
       }
     }
     index = 0;

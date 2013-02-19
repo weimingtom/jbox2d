@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -47,13 +47,13 @@ public class TestbedFrame extends JFrame {
   private TestbedModel model;
   private TestbedController controller;
 
-  public TestbedFrame(final TestbedModel argModel, final TestbedPanel argPanel, TestbedController.UpdateBehavior behavior) {
+  public TestbedFrame(final TestbedModel argModel, final TestbedPanel argPanel) {
     super("JBox2D Testbed");
     setLayout(new BorderLayout());
 
     model = argModel;
     model.setDebugDraw(argPanel.getDebugDraw());
-    controller = new TestbedController(model, argPanel, behavior);
+    controller = new TestbedController(model, argPanel);
     side = new TestbedSidePanel(model, controller);
     
     add((Component) argPanel, "Center");

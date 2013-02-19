@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -47,12 +47,6 @@ public class Filter {
 	 * filtering always wins against the mask bits.
 	 */
 	public int groupIndex;
-	
-	public Filter() {
-	  categoryBits = 0x0001;
-      maskBits = 0xFFFF;
-      groupIndex = 0;
-    }
 	
 	public void set(Filter argOther) {
 		categoryBits = argOther.categoryBits;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -49,17 +49,6 @@ public class WeldJointDef extends JointDef {
 	 * The body2 angle minus body1 angle in the reference state (radians).
 	 */
 	public float referenceAngle;
-	
-	/**
-	 * The mass-spring-damper frequency in Hertz. Rotation only.
-	 * Disable softness with a value of 0.
-	 */
-	public float frequencyHz;
-	
-	/**
-	 * The damping ratio. 0 = no damping, 1 = critical damping.
-	 */
-	public float dampingRatio;
 	
 	public WeldJointDef(){
 		type = JointType.WELD;

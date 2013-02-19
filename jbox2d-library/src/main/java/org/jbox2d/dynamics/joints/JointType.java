@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -26,5 +26,5 @@ package org.jbox2d.dynamics.joints;
 //updated to rev 100 - ec
 public enum JointType {
 	UNKNOWN, REVOLUTE, PRISMATIC, DISTANCE, PULLEY,
-	MOUSE, GEAR, WHEEL, WELD, FRICTION, ROPE, CONSTANT_VOLUME
+	MOUSE, GEAR, LINE, WELD, FRICTION, CONSTANT_VOLUME
 }

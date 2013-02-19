@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -144,10 +144,6 @@ public abstract class DebugDraw {
 	 * @param color
 	 */
 	public abstract void drawString(float x, float y, String s, Color3f color);
-	
-	public void drawString(Vec2 pos, String s, Color3f color) {
-	  drawString(pos.x, pos.y, s, color);
-	}
 		
 	public IViewportTransform getViewportTranform(){
 		return viewportTransform;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,11 +24,16 @@
 package org.jbox2d.pooling.normal;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 
 import org.jbox2d.pooling.IDynamicStack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MutableStack<E, T extends E> implements IDynamicStack<E> {
-  
+
+  private static final Logger log = LoggerFactory.getLogger(MutableStack.class);
+
   private T[] stack;
   private int index;
   private int size;
@@ -65,8 +70,24 @@ public class MutableStack<E, T extends E> implements IDynamicStack<E> {
         } else {
           newStack[i] = sClass.newInstance();
         }
-      } catch (Exception e) {
-        throw new RuntimeException("Error creating pooled object " + sClass.getSimpleName(), e);
+      } catch (InstantiationException e) {
+        log.error("Error creating pooled object " + sClass.getSimpleName(), e);
+        assert (false) : "Error creating pooled object " + sClass.getCanonicalName();
+      } catch (IllegalAccessException e) {
+        log.error("Error creating pooled object " + sClass.getSimpleName(), e);
+        assert (false) : "Error creating pooled object " + sClass.getCanonicalName();
+      } catch (IllegalArgumentException e) {
+        log.error("Error creating pooled object " + sClass.getSimpleName(), e);
+        assert (false) : "Error creating pooled object " + sClass.getCanonicalName();
+      } catch (SecurityException e) {
+        log.error("Error creating pooled object " + sClass.getSimpleName(), e);
+        assert (false) : "Error creating pooled object " + sClass.getCanonicalName();
+      } catch (InvocationTargetException e) {
+        log.error("Error creating pooled object " + sClass.getSimpleName(), e);
+        assert (false) : "Error creating pooled object " + sClass.getCanonicalName();
+      } catch (NoSuchMethodException e) {
+        log.error("Error creating pooled object " + sClass.getSimpleName(), e);
+        assert (false) : "Error creating pooled object " + sClass.getCanonicalName();
       }
     }
     stack = newStack;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -40,6 +40,4 @@ public class ContactPoint {
 	public final Vec2 normal = new Vec2();
 	public final Vec2 position = new Vec2();
 	public PointState state;
-	public float normalImpulse;
-	public float tangentImpulse;
 }

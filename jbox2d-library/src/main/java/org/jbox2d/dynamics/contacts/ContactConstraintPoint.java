@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -21,72 +21,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-/**
- * Created at 7:27:31 AM Jan 21, 2011
- */
-package org.jbox2d.dynamics.joints;
+package org.jbox2d.dynamics.contacts;
 
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
 
-/**
- * @author Daniel Murphy
- */
-public class WheelJointDef extends JointDef {
-	
-	/**
-	 * The local anchor point relative to body1's origin.
-	 */
-	public final Vec2 localAnchorA = new Vec2();
-	
-	/**
-	 * The local anchor point relative to body2's origin.
-	 */
-	public final Vec2 localAnchorB = new Vec2();
-	
-	/**
-	 * The local translation axis in body1.
-	 */
-	public final Vec2 localAxisA = new Vec2();
+// updated to rev 100 - ec
 
-	/**
-	 * Enable/disable the joint motor.
-	 */
-	public boolean enableMotor;
+public class ContactConstraintPoint {
 	
-	/**
-	 * The maximum motor torque, usually in N-m.
-	 */
-	public float maxMotorTorque;
-	
-	/**
-	 * The desired motor speed in radians per second.
-	 */
-	public float motorSpeed;
-	
-	/**
-	 * Suspension frequency, zero indicates no suspension
-	 */
-	public float frequencyHz;
-	
-	/**
-	 * Suspension damping ratio, one indicates critical damping
-	 */
-	public float dampingRatio;
-	
-	public WheelJointDef() {
-		type = JointType.WHEEL;
-		localAxisA.set(1, 0);
-		enableMotor = false;
-		maxMotorTorque = 0f;
-		motorSpeed = 0f;
-	}
-	
-	public void initialize(Body b1, Body b2, Vec2 anchor, Vec2 axis) {
-		bodyA = b1;
-		bodyB = b2;
-		b1.getLocalPointToOut(anchor, localAnchorA);
-		b2.getLocalPointToOut(anchor, localAnchorB);
-		bodyA.getLocalVectorToOut(axis, localAxisA);
-	}
+    public final Vec2 localPoint;
+    public final Vec2 rA;
+    public final Vec2 rB;
+
+    public float normalImpulse;
+    public float tangentImpulse;
+    public float normalMass;
+    public float tangentMass;
+    public float velocityBias;
+
+    public ContactConstraintPoint() {
+        localPoint = new Vec2();
+        rA = new Vec2();
+        rB = new Vec2();
+    }
+    
+    public void set(final ContactConstraintPoint cp){
+    	localPoint.set(cp.localPoint);
+    	rA.set(cp.rA);
+    	rB.set(cp.rB);
+    	normalImpulse = cp.normalImpulse;
+    	tangentImpulse = cp.tangentImpulse;
+    	normalMass = cp.normalMass;
+    	tangentMass = cp.tangentMass;
+        velocityBias = cp.velocityBias;
+    }
 }

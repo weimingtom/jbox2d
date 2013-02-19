@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -47,8 +47,7 @@ public class TestbedModel {
   private final boolean[] codedKeys = new boolean[512];
   private float calculatedFps;
   private float panelWidth;
-  private int currTestIndex = -1;
-  private TestbedTest runningTest;
+  private int currTestIndex;
   
   public TestbedModel() {
   }
@@ -128,14 +127,6 @@ public class TestbedModel {
 
   public int getCurrTestIndex() {
     return currTestIndex;
-  }
-
-  public void setRunningTest(TestbedTest runningTest) {
-    this.runningTest = runningTest;
-  }
-
-  public TestbedTest getRunningTest() {
-    return runningTest;
   }
 
   public void addTestChangeListener(TestChangedListener argListener) {

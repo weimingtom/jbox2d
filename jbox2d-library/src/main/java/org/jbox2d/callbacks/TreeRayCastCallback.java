@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,6 +25,7 @@ package org.jbox2d.callbacks;
 
 import org.jbox2d.collision.RayCastInput;
 import org.jbox2d.collision.broadphase.DynamicTree;
+import org.jbox2d.collision.broadphase.DynamicTreeNode;
 
 // updated to rev 100
 
@@ -36,9 +37,9 @@ import org.jbox2d.collision.broadphase.DynamicTree;
 public interface TreeRayCastCallback {
 	/**
 	 * 
-	 * @param input
-	 * @param nodeId
+	 * @param argInput
+	 * @param argNode
 	 * @return the fraction to the node
 	 */
-	public float raycastCallback( RayCastInput input, int nodeId);
+	public float raycastCallback( RayCastInput argInput, DynamicTreeNode argNode);
 }

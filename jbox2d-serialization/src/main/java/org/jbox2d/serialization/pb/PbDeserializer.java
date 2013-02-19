@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -35,9 +35,7 @@ import org.box2d.proto.Box2D.PbJointType;
 import org.box2d.proto.Box2D.PbShape;
 import org.box2d.proto.Box2D.PbVec2;
 import org.box2d.proto.Box2D.PbWorld;
-import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
@@ -54,6 +52,7 @@ import org.jbox2d.dynamics.joints.FrictionJointDef;
 import org.jbox2d.dynamics.joints.GearJointDef;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.JointDef;
+import org.jbox2d.dynamics.joints.LineJointDef;
 import org.jbox2d.dynamics.joints.MouseJointDef;
 import org.jbox2d.dynamics.joints.PrismaticJointDef;
 import org.jbox2d.dynamics.joints.PulleyJointDef;
@@ -69,7 +68,8 @@ public class PbDeserializer implements JbDeserializer {
   private ObjectListener listener = null;
   private UnsupportedListener ulistener = null;
 
-  public PbDeserializer() {}
+  public PbDeserializer() {
+  }
 
   public PbDeserializer(UnsupportedListener argListener) {
     ulistener = argListener;
@@ -105,7 +105,7 @@ public class PbDeserializer implements JbDeserializer {
   }
 
   public World deserializeWorld(PbWorld argWorld) {
-    World world = new World(pbToVec(argWorld.getGravity()));
+    World world = new World(pbToVec(argWorld.getGravity()), argWorld.getAllowSleep());
 
     world.setAutoClearForces(argWorld.getAutoClearForces());
     world.setContinuousPhysics(argWorld.getContinuousPhysics());
@@ -168,7 +168,7 @@ public class PbDeserializer implements JbDeserializer {
     bd.linearDamping = b.getLinearDamping();
     bd.linearVelocity.set(pbToVec(b.getLinearVelocity()));
     bd.position.set(pbToVec(b.getPosition()));
-
+    
     switch (b.getType()) {
       case DYNAMIC:
         bd.type = BodyType.DYNAMIC;
@@ -180,8 +180,8 @@ public class PbDeserializer implements JbDeserializer {
         bd.type = BodyType.STATIC;
         break;
       default:
-        UnsupportedObjectException e =
-            new UnsupportedObjectException("Unknown body type: " + argBody.getType(), Type.BODY);
+        UnsupportedObjectException e = new UnsupportedObjectException("Unknown body type: "
+            + argBody.getType(), Type.BODY);
         if (ulistener == null || ulistener.isUnsupported(e)) {
           throw e;
         }
@@ -240,51 +240,38 @@ public class PbDeserializer implements JbDeserializer {
       case CIRCLE:
         CircleShape c = new CircleShape();
         c.m_p.set(pbToVec(s.getCenter()));
+        c.m_radius = s.getRadius();
         shape = c;
         break;
       case POLYGON:
         PolygonShape p = new PolygonShape();
         p.m_centroid.set(pbToVec(s.getCentroid()));
-        p.m_count = s.getPointsCount();
-        for (int i = 0; i < p.m_count; i++) {
+        p.m_radius = s.getRadius();
+        p.m_vertexCount = s.getPointsCount();
+        for (int i = 0; i < p.m_vertexCount; i++) {
           p.m_vertices[i].set(pbToVec(s.getPoints(i)));
           p.m_normals[i].set(pbToVec(s.getNormals(i)));
         }
         shape = p;
         break;
       case EDGE:
-        EdgeShape edge = new EdgeShape();
-        edge.m_vertex0.set(pbToVec(s.getV0()));
-        edge.m_vertex1.set(pbToVec(s.getV1()));
-        edge.m_vertex2.set(pbToVec(s.getV2()));
-        edge.m_vertex3.set(pbToVec(s.getV3()));
-        edge.m_hasVertex0 = s.getHas0();
-        edge.m_hasVertex3 = s.getHas3();
-        shape = edge;
-        break;
-      case CHAIN: {
-        ChainShape chain = new ChainShape();
-        chain.m_count = s.getPointsCount();
-        for (int i = 0; i < chain.m_count; i++) {
-          chain.m_vertices[i].set(pbToVec(s.getPoints(i)));
+      case LOOP: {
+        UnsupportedObjectException e = new UnsupportedObjectException(
+            "Edge and loop shapes are not yet supported", Type.SHAPE);
+        if (ulistener == null || ulistener.isUnsupported(e)) {
+          throw e;
         }
-        chain.m_hasPrevVertex = s.getHas0();
-        chain.m_hasNextVertex = s.getHas3();
-        chain.m_prevVertex.set(pbToVec(s.getPrev()));
-        chain.m_nextVertex.set(pbToVec(s.getNext()));
-        shape = chain;
-        break;
+        return null;
       }
       default: {
-        UnsupportedObjectException e =
-            new UnsupportedObjectException("Unknown shape type: " + s.getType(), Type.SHAPE);
+        UnsupportedObjectException e = new UnsupportedObjectException("Unknown shape type: "
+            + s.getType(), Type.SHAPE);
         if (ulistener == null || ulistener.isUnsupported(e)) {
           throw e;
         }
         return null;
       }
     }
-    shape.m_radius = s.getRadius();
 
     if (listener != null) {
       listener.processShape(shape, s.getTag());
@@ -311,7 +298,7 @@ public class PbDeserializer implements JbDeserializer {
         def.enableMotor = argJoint.getEnableMotor();
         def.localAnchorA.set(pbToVec(argJoint.getLocalAnchorA()));
         def.localAnchorB.set(pbToVec(argJoint.getLocalAnchorB()));
-        def.localAxisA.set(pbToVec(argJoint.getLocalAxisA()));
+        def.localAxis1.set(pbToVec(argJoint.getLocalAxisA()));
         def.lowerTranslation = argJoint.getLowerLimit();
         def.maxMotorForce = argJoint.getMaxMotorForce();
         def.motorSpeed = argJoint.getMotorSpeed();
@@ -352,6 +339,8 @@ public class PbDeserializer implements JbDeserializer {
         def.groundAnchorB.set(pbToVec(argJoint.getGroundAnchorB()));
         def.lengthA = argJoint.getLengthA();
         def.lengthB = argJoint.getLengthB();
+        def.maxLengthA = argJoint.getMaxLengthA();
+        def.maxLengthB = argJoint.getMaxLengthB();
         def.ratio = argJoint.getRatio();
         break;
       }
@@ -381,8 +370,8 @@ public class PbDeserializer implements JbDeserializer {
         break;
       }
       case WHEEL: {
-        UnsupportedObjectException e =
-            new UnsupportedObjectException("Wheel joint not supported yet.", Type.JOINT);
+        UnsupportedObjectException e = new UnsupportedObjectException(
+            "Wheel joint not supported yet.", Type.JOINT);
         if (ulistener == null || ulistener.isUnsupported(e)) {
           throw e;
         }
@@ -394,8 +383,6 @@ public class PbDeserializer implements JbDeserializer {
         def.localAnchorA.set(pbToVec(argJoint.getLocalAnchorA()));
         def.localAnchorB.set(pbToVec(argJoint.getLocalAnchorB()));
         def.referenceAngle = argJoint.getRefAngle();
-        def.frequencyHz = argJoint.getFrequency();
-        def.dampingRatio = argJoint.getDampingRatio();
         break;
       }
       case FRICTION: {
@@ -408,8 +395,8 @@ public class PbDeserializer implements JbDeserializer {
         break;
       }
       case ROPE: {
-        UnsupportedObjectException e =
-            new UnsupportedObjectException("Rope joint not supported yet.", Type.JOINT);
+        UnsupportedObjectException e = new UnsupportedObjectException(
+            "Rope joint not supported yet.", Type.JOINT);
         if (ulistener == null || ulistener.isUnsupported(e)) {
           throw e;
         }
@@ -444,16 +431,22 @@ public class PbDeserializer implements JbDeserializer {
         break;
       }
       case LINE: {
-        UnsupportedObjectException e =
-            new UnsupportedObjectException("Line joint no longer supported.", Type.JOINT);
-        if (ulistener == null || ulistener.isUnsupported(e)) {
-          throw e;
-        }
-        return null;
+        LineJointDef def = new LineJointDef();
+        jd = def;
+        def.localAnchorA.set(pbToVec(argJoint.getLocalAnchorA()));
+        def.localAnchorB.set(pbToVec(argJoint.getLocalAnchorB()));
+        def.localAxisA.set(pbToVec(argJoint.getLocalAxisA()));
+        def.enableLimit = argJoint.getEnableLimit();
+        def.enableMotor = argJoint.getEnableMotor();
+        def.lowerTranslation = argJoint.getLowerLimit();
+        def.upperTranslation = argJoint.getUpperLimit();
+        def.maxMotorForce = argJoint.getMaxForce();
+        def.motorSpeed = argJoint.getMotorSpeed();
+        break;
       }
       default: {
-        UnsupportedObjectException e =
-            new UnsupportedObjectException("Unknown joint type: " + argJoint.getType(), Type.JOINT);
+        UnsupportedObjectException e = new UnsupportedObjectException("Unknown joint type: "
+            + argJoint.getType(), Type.JOINT);
         if (ulistener == null || ulistener.isUnsupported(e)) {
           throw e;
         }

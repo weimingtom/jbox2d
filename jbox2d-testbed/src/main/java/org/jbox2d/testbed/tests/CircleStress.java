@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -83,6 +83,15 @@ public class CircleStress extends TestbedTest {
   public void initTest(boolean argDeserialized) {
     if (argDeserialized) {
       return;
+    }
+
+    {
+      BodyDef bd = new BodyDef();
+      Body ground = getWorld().createBody(bd);
+
+      PolygonShape shape = new PolygonShape();
+      shape.setAsEdge(new Vec2(-40.0f, 0.0f), new Vec2(40.0f, 0.0f));
+      ground.createFixture(shape, 0.0f);
     }
 
     Body leftWall = null;

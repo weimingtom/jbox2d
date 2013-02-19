@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -117,13 +117,13 @@ public class BlobTest4 extends TestbedTest {
 			cd.m_radius = bodyRadius;
 			fd.shape = cd;
 			fd.density = 1.0f;
+			fd.filter.groupIndex = -2;
 			body.createFixture(fd);
 			cvjd.addBody(body);
 		}
 
 		cvjd.frequencyHz = 10.0f;
 		cvjd.dampingRatio = 1.0f;
-		cvjd.collideConnected = false;
 		getWorld().createJoint(cvjd);
 		
 		BodyDef bd2 = new BodyDef();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,6 @@ package org.jbox2d.testbed.tests;
 
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
@@ -71,8 +70,8 @@ public class EdgeShapes extends TestbedTest {
 				float x2 = x1 + 0.5f;
 				float y2 = 2.0f * MathUtils.cos(x2 / 10.0f * MathUtils.PI);
 
-				EdgeShape shape = new EdgeShape();
-				shape.set(new Vec2(x1, y1), new Vec2(x2, y2));
+				PolygonShape shape = new PolygonShape();
+				shape.setAsEdge(new Vec2(x1, y1), new Vec2(x2, y2));
 				ground.createFixture(shape, 0.0f);
 
 				x1 = x2;

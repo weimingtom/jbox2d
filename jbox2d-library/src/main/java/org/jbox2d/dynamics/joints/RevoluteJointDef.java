@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -137,7 +137,7 @@ public class RevoluteJointDef extends JointDef {
 		bodyB = b2;
 		bodyA.getLocalPointToOut(anchor, localAnchorA);
 		bodyB.getLocalPointToOut(anchor, localAnchorB);
-		referenceAngle = bodyB.getAngle() - bodyA.getAngle();
+		referenceAngle = bodyA.getAngle() - bodyB.getAngle();
 	}
 
 }

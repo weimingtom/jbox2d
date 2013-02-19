@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,7 +25,8 @@ package org.jbox2d.dynamics.contacts;
 
 import org.jbox2d.pooling.IDynamicStack;
 
+// updated to rev 100 - ec
 public class ContactRegister {
-  public IDynamicStack<Contact> creator;
-  public boolean primary;
+    public IDynamicStack<Contact> creator;
+    public boolean primary;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -49,15 +49,15 @@ import javax.swing.event.ChangeListener;
 
 import org.jbox2d.testbed.framework.TestbedController;
 import org.jbox2d.testbed.framework.TestbedModel;
-import org.jbox2d.testbed.framework.TestbedModel.ListItem;
 import org.jbox2d.testbed.framework.TestbedSetting;
-import org.jbox2d.testbed.framework.TestbedSetting.SettingType;
 import org.jbox2d.testbed.framework.TestbedSettings;
 import org.jbox2d.testbed.framework.TestbedTest;
+import org.jbox2d.testbed.framework.TestbedModel.ListItem;
+import org.jbox2d.testbed.framework.TestbedSetting.SettingType;
 
 
 /**
- * The testbed side panel. Facilitates test and setting changes.
+ * The testbed side panel.  Facilitates test and setting changes.
  * 
  * @author Daniel Murphy
  */
@@ -85,6 +85,7 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
     controller = argController;
     initComponents();
     addListeners();
+    tests.setSelectedIndex(1);
 
     model.addTestChangeListener(new TestbedModel.TestChangedListener() {
       @Override
@@ -115,10 +116,11 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
       JLabel testLabel = null;
 
       @Override
-      public Component getListCellRendererComponent(JList list, Object ovalue,
-          int index, boolean isSelected, boolean cellHasFocus) {
-        ListItem value = (ListItem) ovalue;
-        if (value.isCategory()) {
+      public Component getListCellRendererComponent(JList list, Object value, int index,
+          boolean isSelected, boolean cellHasFocus) {
+        ListItem item = (ListItem) value;
+
+        if (item.isCategory()) {
           if (categoryLabel == null) {
             categoryLabel = new JLabel();
             categoryLabel.setOpaque(true);
@@ -127,7 +129,7 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
             categoryLabel.setHorizontalAlignment(SwingConstants.CENTER);
             categoryLabel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
           }
-          categoryLabel.setText(value.category);
+          categoryLabel.setText(item.category);
           return categoryLabel;
         } else {
           if (testLabel == null) {
@@ -135,7 +137,7 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
             testLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 1, 0));
           }
 
-          testLabel.setText(value.test.getTestName());
+          testLabel.setText(item.test.getTestName());
 
           if (isSelected) {
             testLabel.setBackground(list.getSelectionBackground());
@@ -149,7 +151,6 @@ public class TestbedSidePanel extends JPanel implements ChangeListener, ActionLi
       }
     });
 
-    top.add(new JLabel("Choose a test:"));
     top.add(tests);
 
     addSettings(top, settings, SettingType.DRAWING);

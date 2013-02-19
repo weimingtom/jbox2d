@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -71,7 +71,7 @@ public interface TestbedPanel {
 
   /**
    * Renders the world
-   * @return if the renderer is ready for drawing
+   * @return if the rending was successful
    */
   public boolean render();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,6 +24,7 @@
 package org.jbox2d.callbacks;
 
 import org.jbox2d.collision.broadphase.DynamicTree;
+import org.jbox2d.collision.broadphase.DynamicTreeNode;
 
 // update to rev 100
 /**
@@ -35,8 +36,8 @@ public interface TreeCallback {
 	
 	/**
 	 * Callback from a query request.  
-	 * @param proxyId the id of the proxy
+	 * @param node
 	 * @return if the query should be continued
 	 */
-	public boolean treeCallback(int proxyId);
+	public boolean treeCallback(DynamicTreeNode node);
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -28,14 +28,13 @@ package org.jbox2d.testbed.framework;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
-import org.jbox2d.testbed.framework.TestbedController.UpdateBehavior;
+
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The entry point for the testbed application
- * 
  * @author Daniel Murphy
  */
 public class TestbedMain {
@@ -51,7 +50,7 @@ public class TestbedMain {
     TestbedModel model = new TestbedModel();
     TestbedPanel panel = new TestPanelJ2D(model);
     TestList.populateModel(model);
-    JFrame testbed = new TestbedFrame(model, panel, UpdateBehavior.UPDATE_CALLED);
+    JFrame testbed = new TestbedFrame(model, panel);
     testbed.setVisible(true);
     testbed.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }

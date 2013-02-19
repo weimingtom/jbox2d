@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -77,6 +77,9 @@ public class FixtureDef {
 		restitution = 0f;
 		density = 0f;
 		filter = new Filter();
+		filter.categoryBits = 0x0001;
+		filter.maskBits = 0xFFFF;
+		filter.groupIndex = 0;
 		isSensor = false;
 	}
 }

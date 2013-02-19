@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,8 +27,8 @@ import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.callbacks.TreeCallback;
 import org.jbox2d.callbacks.TreeRayCastCallback;
 import org.jbox2d.collision.AABB;
-import static org.jbox2d.collision.broadphase.TreeNode.NULL_NODE;
 import org.jbox2d.collision.RayCastInput;
+import static org.jbox2d.collision.broadphase.DynamicTreeNode.NULL_NODE;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Settings;
@@ -48,7 +48,7 @@ public class DynamicTree {
   public static final int MAX_STACK_SIZE = 64;
 
   private int m_root;
-  private TreeNode[] m_nodes;
+  private DynamicTreeNode[] m_nodes;
   private int m_nodeCount;
   private int m_nodeCapacity;
 
@@ -60,18 +60,18 @@ public class DynamicTree {
   private final DynamicIntStack intStack = new DynamicIntStack(10);
 
   public DynamicTree() {
-    m_root = TreeNode.NULL_NODE;
+    m_root = DynamicTreeNode.NULL_NODE;
     m_nodeCount = 0;
     m_nodeCapacity = 16;
-    m_nodes = new TreeNode[16];
+    m_nodes = new DynamicTreeNode[16];
 
     // Build a linked list for the free list.
     for (int i = 0; i < m_nodeCapacity; i++) {
-      m_nodes[i] = new TreeNode();
+      m_nodes[i] = new DynamicTreeNode();
       m_nodes[i].parent = i + 1;
       m_nodes[i].height = -1;
     }
-    m_nodes[m_nodeCapacity - 1].parent = TreeNode.NULL_NODE;
+    m_nodes[m_nodeCapacity - 1].parent = DynamicTreeNode.NULL_NODE;
     m_freeList = 0;
 
     m_insertionCount = 0;
@@ -88,11 +88,11 @@ public class DynamicTree {
    * @param userData
    * @return
    */
-  public final int createProxy(final AABB aabb, Object userData) {
+  public final DynamicTreeNode createProxy(final AABB aabb, Object userData) {
     int proxyId = allocateNode();
 
     // Fatten the aabb
-    final TreeNode node = m_nodes[proxyId];
+    final DynamicTreeNode node = m_nodes[proxyId];
     node.aabb.lowerBound.x = aabb.lowerBound.x - Settings.aabbExtension;
     node.aabb.lowerBound.y = aabb.lowerBound.y - Settings.aabbExtension;
     node.aabb.upperBound.x = aabb.upperBound.x + Settings.aabbExtension;
@@ -101,7 +101,7 @@ public class DynamicTree {
 
     insertLeaf(proxyId);
 
-    return proxyId;
+    return node;
   }
 
   /**
@@ -109,7 +109,9 @@ public class DynamicTree {
    * 
    * @param proxyId
    */
-  public final void destroyProxy(int proxyId) {
+  public final void destroyProxy(DynamicTreeNode proxy) {
+    assert (proxy != null);
+    int proxyId = proxy.id;
     assert (0 <= proxyId && proxyId < m_nodeCapacity);
     assert (m_nodes[proxyId].isLeaf());
 
@@ -124,9 +126,11 @@ public class DynamicTree {
    * 
    * @return true if the proxy was re-inserted.
    */
-  public final boolean moveProxy(int proxyId, final AABB aabb, Vec2 displacement) {
+  public final boolean moveProxy(DynamicTreeNode proxy, final AABB aabb, Vec2 displacement) {
+	assert(proxy != null);
+	int proxyId = proxy.id;
     assert (0 <= proxyId && proxyId < m_nodeCapacity);
-    final TreeNode node = m_nodes[proxyId];
+    final DynamicTreeNode node = m_nodes[proxyId];
     assert (node.isLeaf());
 
     if (node.aabb.contains(aabb)) {
@@ -182,7 +186,7 @@ public class DynamicTree {
    * overlaps the supplied AABB.
    * 
    * @param callback
-   * @param araabbgAABB
+   * @param aabb
    */
   public final void query(TreeCallback callback, AABB aabb) {
     intStack.reset();
@@ -190,15 +194,15 @@ public class DynamicTree {
 
     while (intStack.getCount() > 0) {
       int nodeId = intStack.pop();
-      if (nodeId == TreeNode.NULL_NODE) {
+      if (nodeId == DynamicTreeNode.NULL_NODE) {
         continue;
       }
 
-      final TreeNode node = m_nodes[nodeId];
+      final DynamicTreeNode node = m_nodes[nodeId];
 
       if (AABB.testOverlap(node.aabb, aabb)) {
         if (node.isLeaf()) {
-          boolean proceed = callback.treeCallback(nodeId);
+          boolean proceed = callback.treeCallback(node);
           if (!proceed) {
             return;
           }
@@ -237,7 +241,7 @@ public class DynamicTree {
     r.normalize();
 
     // v is perpendicular to the segment.
-    Vec2.crossToOutUnsafe(1f, r, v);
+    Vec2.crossToOut(1f, r, v);
     absV.set(v).absLocal();
 
     // Separating axis for segment (Gino, p80).
@@ -255,11 +259,11 @@ public class DynamicTree {
     intStack.push(m_root);
     while (intStack.getCount() > 0) {
       int nodeId = intStack.pop();
-      if (nodeId == TreeNode.NULL_NODE) {
+      if (nodeId == DynamicTreeNode.NULL_NODE) {
         continue;
       }
 
-      final TreeNode node = m_nodes[nodeId];
+      final DynamicTreeNode node = m_nodes[nodeId];
 
       if (!AABB.testOverlap(node.aabb, segAABB)) {
         continue;
@@ -280,7 +284,7 @@ public class DynamicTree {
         subInput.p2.set(input.p2);
         subInput.maxFraction = maxFraction;
 
-        float value = callback.raycastCallback(subInput, nodeId);
+        float value = callback.raycastCallback(subInput, node);
 
         if (value == 0.0f) {
           // The client has terminated the ray cast.
@@ -311,7 +315,7 @@ public class DynamicTree {
   private final int computeHeight(int nodeId) {
     assert (0 <= nodeId && nodeId < m_nodeCapacity);
 
-    final TreeNode node = m_nodes[nodeId];
+    final DynamicTreeNode node = m_nodes[nodeId];
 
     if (node.isLeaf()) {
       return 0;
@@ -362,7 +366,7 @@ public class DynamicTree {
   public int getMaxBalance() {
     int maxBalance = 0;
     for (int i = 0; i < m_nodeCapacity; ++i) {
-      final TreeNode node = m_nodes[i];
+      final DynamicTreeNode node = m_nodes[i];
       if (node.height <= 1) {
         continue;
       }
@@ -388,12 +392,12 @@ public class DynamicTree {
       return 0.0f;
     }
 
-    final TreeNode root = m_nodes[m_root];
+    final DynamicTreeNode root = m_nodes[m_root];
     float rootArea = root.aabb.getPerimeter();
 
     float totalArea = 0.0f;
     for (int i = 0; i < m_nodeCapacity; ++i) {
-      final TreeNode node = m_nodes[i];
+      final DynamicTreeNode node = m_nodes[i];
       if (node.height < 0) {
         // Free node in pool
         continue;
@@ -449,11 +453,11 @@ public class DynamicTree {
 
       int index1 = nodes[iMin];
       int index2 = nodes[jMin];
-      TreeNode child1 = m_nodes[index1];
-      TreeNode child2 = m_nodes[index2];
+      DynamicTreeNode child1 = m_nodes[index1];
+      DynamicTreeNode child2 = m_nodes[index2];
 
       int parentIndex = allocateNode();
-      TreeNode parent = m_nodes[parentIndex];
+      DynamicTreeNode parent = m_nodes[parentIndex];
       parent.child1 = index1;
       parent.child2 = index2;
       parent.height = 1 + MathUtils.max(child1.height, child2.height);
@@ -477,18 +481,18 @@ public class DynamicTree {
     if (m_freeList == NULL_NODE) {
       assert (m_nodeCount == m_nodeCapacity);
 
-      TreeNode[] old = m_nodes;
+      DynamicTreeNode[] old = m_nodes;
       m_nodeCapacity *= 2;
-      m_nodes = new TreeNode[m_nodeCapacity];
+      m_nodes = new DynamicTreeNode[m_nodeCapacity];
       System.arraycopy(old, 0, m_nodes, 0, old.length);
 
       // Build a linked list for the free list.
       for (int i = m_nodeCount; i < m_nodeCapacity; i++) {
-        m_nodes[i] = new TreeNode();
+        m_nodes[i] = new DynamicTreeNode();
         m_nodes[i].parent = i + 1;
         m_nodes[i].height = -1;
       }
-      m_nodes[m_nodeCapacity - 1].parent = TreeNode.NULL_NODE;
+      m_nodes[m_nodeCapacity - 1].parent = DynamicTreeNode.NULL_NODE;
       m_freeList = m_nodeCount;
     }
     int nodeId = m_freeList;
@@ -499,6 +503,7 @@ public class DynamicTree {
     m_nodes[nodeId].child2 = NULL_NODE;
     m_nodes[nodeId].height = 0;
     m_nodes[nodeId].userData = null;
+    m_nodes[nodeId].id = nodeId;
     ++m_nodeCount;
     return nodeId;
   }
@@ -537,7 +542,7 @@ public class DynamicTree {
     AABB leafAABB = m_nodes[leaf].aabb;
     int index = m_root;
     while (m_nodes[index].isLeaf() == false) {
-      final TreeNode node = m_nodes[index];
+      final DynamicTreeNode node = m_nodes[index];
       int child1 = node.child1;
       int child2 = node.child2;
 
@@ -592,7 +597,7 @@ public class DynamicTree {
     int sibling = index;
     int oldParent = m_nodes[sibling].parent;
     int newParentId = allocateNode();
-    final TreeNode newParent = m_nodes[newParentId];
+    final DynamicTreeNode newParent = m_nodes[newParentId];
     newParent.parent = oldParent;
     newParent.userData = null;
     newParent.aabb.combine(leafAABB, m_nodes[sibling].aabb);
@@ -691,7 +696,7 @@ public class DynamicTree {
   private int balance(int iA) {
     assert (iA != NULL_NODE);
 
-    TreeNode A = m_nodes[iA];
+    DynamicTreeNode A = m_nodes[iA];
     if (A.isLeaf() || A.height < 2) {
       return iA;
     }
@@ -701,8 +706,8 @@ public class DynamicTree {
     assert (0 <= iB && iB < m_nodeCapacity);
     assert (0 <= iC && iC < m_nodeCapacity);
 
-    TreeNode B = m_nodes[iB];
-    TreeNode C = m_nodes[iC];
+    DynamicTreeNode B = m_nodes[iB];
+    DynamicTreeNode C = m_nodes[iC];
 
     int balance = C.height - B.height;
 
@@ -710,8 +715,8 @@ public class DynamicTree {
     if (balance > 1) {
       int iF = C.child1;
       int iG = C.child2;
-      TreeNode F = m_nodes[iF];
-      TreeNode G = m_nodes[iG];
+      DynamicTreeNode F = m_nodes[iF];
+      DynamicTreeNode G = m_nodes[iG];
       assert (0 <= iF && iF < m_nodeCapacity);
       assert (0 <= iG && iG < m_nodeCapacity);
 
@@ -760,8 +765,8 @@ public class DynamicTree {
     if (balance < -1) {
       int iD = B.child1;
       int iE = B.child2;
-      TreeNode D = m_nodes[iD];
-      TreeNode E = m_nodes[iE];
+      DynamicTreeNode D = m_nodes[iD];
+      DynamicTreeNode E = m_nodes[iE];
       assert (0 <= iD && iD < m_nodeCapacity);
       assert (0 <= iE && iE < m_nodeCapacity);
 
@@ -818,7 +823,7 @@ public class DynamicTree {
       assert (m_nodes[index].parent == NULL_NODE);
     }
 
-    final TreeNode node = m_nodes[index];
+    final DynamicTreeNode node = m_nodes[index];
 
     int child1 = node.child1;
     int child2 = node.child2;
@@ -845,7 +850,7 @@ public class DynamicTree {
       return;
     }
 
-    final TreeNode node = m_nodes[index];
+    final DynamicTreeNode node = m_nodes[index];
 
     int child1 = node.child1;
     int child2 = node.child2;
@@ -888,7 +893,7 @@ public class DynamicTree {
   private final Vec2 textVec = new Vec2();
 
   public void drawTree(DebugDraw argDraw, int nodeId, int spot, int height) {
-    final TreeNode node = m_nodes[nodeId];
+    final DynamicTreeNode node = m_nodes[nodeId];
     node.aabb.getVertices(drawVecs);
 
     color.set(1, (height - spot) * 1f / height, (height - spot) * 1f / height);

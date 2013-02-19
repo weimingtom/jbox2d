@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, Daniel Murphy
+ * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -26,7 +26,6 @@
  */
 package org.jbox2d.testbed.tests;
 
-import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -58,8 +57,8 @@ public class PyramidTest extends TestbedTest {
 			BodyDef bd = new BodyDef();
 			Body ground = getWorld().createBody(bd);
 
-			EdgeShape shape = new EdgeShape();
-			shape.set(new Vec2(-40.0f, 0f), new Vec2(40.0f, 0f));
+			PolygonShape shape = new PolygonShape();
+			shape.setAsEdge(new Vec2(-40.0f, 0f), new Vec2(40.0f, 0f));
 			ground.createFixture(shape, 0.0f);
 			
 //			CircleShape cs = new CircleShape();
